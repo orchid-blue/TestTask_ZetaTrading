@@ -10,9 +10,11 @@ namespace ZetaTrading.API.Domain.Persistence.Repositories
 {
     public class NodeRepository : BaseRepository, INodeRepository
     {
-        public NodeRepository(AppDbContext context) : base(context)
-        {
+        private readonly ILogger<NodeRepository> _logger;
 
+        public NodeRepository(AppDbContext context, ILogger<NodeRepository> logger) : base(context)
+        {
+            _logger = logger;
         }
 
         public TreeNode? GetRootNodeByName(string treeName)
@@ -28,6 +30,7 @@ namespace ZetaTrading.API.Domain.Persistence.Repositories
 
             if (nodes.Count == 0)
             {
+                _logger.LogInformation($"No tree with name = {parentName} has found. Create a new tree.");
                 return new List<TreeNode>() { CreateNewNode(parentName, parentName)};
             }
 
@@ -75,7 +78,6 @@ namespace ZetaTrading.API.Domain.Persistence.Repositories
                     throw;
                 }
             }
-           
         }
 
         public TreeNode? GetNodeByIdAndTreeName(string treeName, int nodeId)

@@ -65,7 +65,6 @@ namespace ZetaTrading.API.Services
                 Text = BuildText(journalRecord)
             };
         }
-
         private JournalRecordDTO BuildJournalRecordDTO(JournalRecord journalRecord)
         {
             return new JournalRecordDTO()
@@ -75,7 +74,6 @@ namespace ZetaTrading.API.Services
                 CreatedAt = journalRecord.CreatedDate
             };
         }
-
         public RangeResultDTO GetRangeRecords(int skip, int take, FilterDTO filter)
         {
             var rangeRes = _journalRecordRepository.GetRangeJournalRecords(skip, take, filter.From, filter.To);
@@ -84,7 +82,7 @@ namespace ZetaTrading.API.Services
             {
                 Skip = skip,
                 Count = rangeRes.Count,
-                Items = rangeRes.Select(x => BuildJournalRecordDTO(x)).ToList()
+                Items = rangeRes.Select(BuildJournalRecordDTO).ToList()
             };
         }
     }

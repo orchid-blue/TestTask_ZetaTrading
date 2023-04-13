@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using ZetaTrading.API.Domain.Services;
-using ZetaTrading.Filters;
 
 namespace ZetaTrading.API.Controllers
 {
@@ -34,7 +33,6 @@ namespace ZetaTrading.API.Controllers
 
         [HttpPost]
         [Route("/api.user.tree.node.delete")]
-        [SecureExceptionFilter]
         public IActionResult Delete([Required] string treeName, [Required] int nodeId)
         {
             _nodeService.DeleteNode(treeName, nodeId);

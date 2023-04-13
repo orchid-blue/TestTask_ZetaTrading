@@ -9,14 +9,17 @@ namespace ZetaTrading.API.Services
     public class NodeService : INodeService
     {
         private readonly INodeRepository _nodeRepository;
+        private ILogger<NodeService> _logger;
 
-        public NodeService(INodeRepository nodeRepository)
+        public NodeService(INodeRepository nodeRepository, ILogger<NodeService> logger)
         {
             _nodeRepository = nodeRepository;
+            _logger = logger;
         }
 
         public NodeDTO? GetRootNodeByName(string treeName)
         {
+            _logger.LogInformation("Start Getting Tree");
             List<TreeNode> allTreeNodes = _nodeRepository
                 .GetNodesByParentName(treeName);
             List<NodeDTO> allNodes = allTreeNodes
@@ -25,6 +28,8 @@ namespace ZetaTrading.API.Services
 
             NodeDTO? result = new NodeDTO();
 
+            _logger.LogInformation("Finish Getting Tree");
+            _logger.LogInformation("Start Building TreeObject to display");
             foreach (var node in allTreeNodes)
             {
                 NodeDTO? current = allNodes.FirstOrDefault(x => x.Id == node.Id);
@@ -39,11 +44,14 @@ namespace ZetaTrading.API.Services
                 }
             }
 
+            _logger.LogInformation("Finish Building TreeObject to display");
+
             return result;
         }
 
         public void DeleteNode(string treeName, int nodeId)
         {
+            _logger.LogInformation($"Start Delete node with id = {nodeId} from {treeName} tree");
             TreeNode? node = _nodeRepository.GetNodeByIdAndTreeName(treeName, nodeId);
 
             if (node == null)
@@ -57,10 +65,13 @@ namespace ZetaTrading.API.Services
             }
 
             _nodeRepository.DeleteNode(nodeId);
+
+            _logger.LogInformation($"Finish Delete node with id = {nodeId} from {treeName} tree");
         }
 
         public void RenameNode(string treeName, int nodeId, string newName)
         {
+            _logger.LogInformation($"Start Rename node with id = {nodeId} from {treeName} tree");
             TreeNode? node = _nodeRepository.GetNodeByIdAndTreeName(treeName, nodeId);
 
             if (node == null)
@@ -74,10 +85,12 @@ namespace ZetaTrading.API.Services
             }
 
             _nodeRepository.RenameNode(nodeId, newName);
+            _logger.LogInformation($"Finish Rename node with id = {nodeId} from {treeName} tree");
         }
 
         public void CreateNode(string treeName, int parentNodeId, string name)
         {
+            _logger.LogInformation($"Start Create node with name = {name} to parentId={parentNodeId} to {treeName} tree");
             if (!_nodeRepository.IsNameUniqueWithinTheTree(treeName, name))
             {
                 throw new SecureException("Selected name already exists!");
@@ -89,6 +102,7 @@ namespace ZetaTrading.API.Services
             }
 
             _nodeRepository.CreateNewNode(name, treeName, parentNodeId);
+            _logger.LogInformation($"Finish Create node with name = {name} to parentId = {parentNodeId} to {treeName} tree");
         }
     }
 }

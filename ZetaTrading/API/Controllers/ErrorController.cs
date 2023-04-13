@@ -10,9 +10,11 @@ namespace ZetaTrading.API.Controllers
     public class ErrorController : Controller
     {
         private readonly IJournalRecordService _journalRecordService;
-        public ErrorController(IJournalRecordService journamRecordService)
+        private readonly ILogger<ErrorController> _logger;
+        public ErrorController(IJournalRecordService journamRecordService, ILogger<ErrorController> logger)
         {
             _journalRecordService = journamRecordService;
+            _logger = logger;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -35,7 +37,9 @@ namespace ZetaTrading.API.Controllers
             _journalRecordService.PushRecordToJournal(context.Error);
 
             ExceptionDTO err = _journalRecordService.GetExceptionToDisplay(context.Error);
-            err.Type = context.Error is SecureException ? "secure" : "internal"; ;
+            err.Type = context.Error is SecureException ? "secure" : "internal";
+
+            _logger.LogInformation($"An Exception raised with Message: {currEx.Message}");
             
             return Json(err);
         }
