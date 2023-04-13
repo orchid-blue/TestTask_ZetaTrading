@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
+using ZetaTrading.Models;
 
-namespace WebApplication1.Data
+namespace ZetaTrading.API.Domain.Persistence.Contexts
 {
     public class AppDbContext : DbContext
     {
@@ -12,18 +12,18 @@ namespace WebApplication1.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity("WebApplication1.Models.TreeNode", b =>
+            modelBuilder.Entity("ZetaTrading.Models.TreeNode", b =>
             {
-                b.HasOne("WebApplication1.Models.TreeNode", "ParentNode")
+                b.HasOne("ZetaTrading.Models.TreeNode", "ParentNode")
                     .WithMany()
                     .HasForeignKey("ParentNodeId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 b.Navigation("ParentNode");
             });
         }
 
-        DbSet<TreeNode> TreeNodes { get; set; }
+        public DbSet<TreeNode> TreeNodes { get; set; }
+        public DbSet<JournalRecord> JournalRecords { get; set; }
     }
 }
