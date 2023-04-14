@@ -24,11 +24,13 @@ namespace ZetaTrading.API.Services
 
         public ExceptionDTO GetExceptionToDisplay(Exception ex)
         {
-            string traceId = ex.Data["traceId"].ToString();
+            string traceId = ex.Data["traceId"]?
+                .ToString() ?? string.Empty;
             string message = ex is SecureException ? ex.Message : $"Internal server error ID = {traceId}.";
+            string type = ex is SecureException ? "secure" : "internal";
 
             ExceptionDataDTO data = new ExceptionDataDTO() { Message = message };
-            ExceptionDTO error = new ExceptionDTO() { Data = data, Id = traceId };
+            ExceptionDTO error = new ExceptionDTO() { Data = data, Id = traceId, Type = type };
 
             return error;
         }
@@ -46,8 +48,8 @@ namespace ZetaTrading.API.Services
 
         private string BuildText(JournalRecord? journalRecord)
         {
-            string queryString = journalRecord.QueryParameters.Replace("?", string.Empty);
-            var pms = queryString.Split('&');
+            string? queryString = journalRecord?.QueryParameters?.Replace("?", string.Empty);
+            var pms = queryString?.Split('&');
             
             return $@"  Request ID = {journalRecord.RequestId}
                             Path = {journalRecord.Path}

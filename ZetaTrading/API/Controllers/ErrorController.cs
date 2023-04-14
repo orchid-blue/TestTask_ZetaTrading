@@ -37,7 +37,6 @@ namespace ZetaTrading.API.Controllers
             _journalRecordService.PushRecordToJournal(context.Error);
 
             ExceptionDTO err = _journalRecordService.GetExceptionToDisplay(context.Error);
-            err.Type = context.Error is SecureException ? "secure" : "internal";
 
             _logger.LogInformation($"An Exception raised with Message: {currEx.Message}");
             
